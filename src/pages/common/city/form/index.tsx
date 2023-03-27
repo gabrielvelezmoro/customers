@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { Box, Paper, Grid, TextField, InputLabel, MenuItem, Typography } from '@mui/material'
-import TextareaAutosize from '@mui/base/TextareaAutosize';
-import { Checkbox } from '@mui/material'
+import { Box, Paper, Grid, TextField, MenuItem, Typography } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { FormHeader, FormAlert } from 'components'
@@ -26,7 +24,7 @@ const CityForm: React.FC = () => {
   const history = useHistory()
 
   const validationSchema = yup.object().shape({
-    stateId: yup.string()
+    id: yup.string()
       .required('Campo obrigatório'),
     name: yup.string()
       .required('Campo obrigatório'),
@@ -43,7 +41,7 @@ const CityForm: React.FC = () => {
   } = useForm<ICityDTO>({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      stateId: null,
+      id: null,
       name: '',
     }
   })
@@ -89,8 +87,10 @@ const CityForm: React.FC = () => {
           const { data } = response.data
 
           const cityResult = {
-            stateId: data.stateId.id,
+            id: data.id.id,
             name: data.name,
+            email: data.email,
+            gender: data.gender,
           }
 
           return cityResult
@@ -114,17 +114,18 @@ const CityForm: React.FC = () => {
 
   const onSubmit = useCallback(async (data: ICityDTO) => {
     const payLoad: ICityDTO = {
-      stateId: data.stateId,
+      id: data.id,
       name: data.name,
+      email: data.email,
+      gender: data.gender,
     }
 
     if (params.id) {
       const { id } = params
 
-      payLoad.id = id
 
       await api
-        .put(`/cities`, payLoad)
+        .put(`/cities`, id)
         .then(history.push('/cities'))
         .catch(error => {
           console.log(error.response.data)
@@ -160,7 +161,7 @@ const CityForm: React.FC = () => {
         data-testid="form"
       >
         <FormHeader
-          title="Cidades"
+          title="Clientes"
           icon={ListIcon}
           backRoute="/cities"
           showSaveButton={true}
@@ -178,19 +179,19 @@ const CityForm: React.FC = () => {
                   UF
                 </Typography>
                 <TextField
-                  id="stateId"
-                  error={!!errors.stateId}
-                  helperText={errors?.stateId?.message}
+                  id="id"
+                  error={!!errors.id}
+                  helperText={errors?.id?.message}
                   variant="outlined"
                   margin="dense"
                   size="small"
                   fullWidth={true}
-                  value={`${watch().stateId}`}
+                  value={`${watch().id}`}
                   select
                   autoFocus
                   inputRef={firstInputElement}
-                  {...register("stateId", { onChange: (e) => {
-                    setValue("stateId", e.target.value)
+                  {...register("id", { onChange: (e) => {
+                    setValue("id", e.target.value)
                     handleChange(e)
                   }})}
                 >

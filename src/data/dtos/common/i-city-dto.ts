@@ -1,9 +1,14 @@
+enum Gender{
+  'Male',
+  'Female',
+  'Other'
+}
+
 interface ICityDTO {
-  id?: string
-  stateId?: string
-  name?: string
-  createdAt?: Date
-  updatedAt?: Date
+  id: number;
+  name: string;
+  email: string;
+  gender: Gender;
 }
 
 export type { ICityDTO }

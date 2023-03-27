@@ -9,14 +9,20 @@ import { ICityDTO } from 'data/dtos/common/i-city-dto'
 import { useAlreadyMounted } from 'utils/use-already-mounted';
 
 const headCells: ITableHeadCellDTO[] = [
-  {
-    id: 'code',
-    label: 'UF',
-    width: 1
-  },
+  
   {
     id: 'name',
     label: 'Nome',
+    width: 5
+  },
+  {
+    id: 'email',
+    label: 'Email',
+    width: 5
+  },
+  {
+    id: 'gender',
+    label: 'Gender',
     width: 10
   },
 ]
@@ -27,7 +33,6 @@ const CityList: React.FC = () => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
   const [orderByDirection, setOrderByDirection] = useState(true)
-  const [rowsCount, setRowsCount] = useState(0)
   const [citiesList, setCitiesList] = useState<ICityDTO[]>([])
   const [recordToDelete, setRecordToDelete] = useState<string | null>('')
   const [columnOrder, setColumnOrder] = useState<('ASC' | 'DESC')[]>([])
@@ -39,31 +44,24 @@ const CityList: React.FC = () => {
     setLoading(1)
 
     await api
-      .post('/cities/list', {search, page, rowsPerPage, columnOrder})
+      .get('/customer')
       .then(async listResponse => {
         const { data } = listResponse.data
+        console.log(data);
         setCitiesList(data)
 
-        await api
-          .post('/cities/count', {search})
-          .then(countResponse => {
-            const { count } = countResponse.data.data
-            setRowsCount(count)
-          })
-          .then(() => setLoading(0))
-          .catch(error => {
-            console.log(error)
-          })
+        
       })
       .catch(error => {
         console.log(error)
       })
   }
 
+  console.log(citiesList)
 
   const handleDelete = async () => {
     await api
-      .delete(`/cities/${recordToDelete}`)
+      .delete(`/customer/${recordToDelete}`)
       .then(async () => {
         await loadCities()
       })
@@ -104,23 +102,23 @@ const CityList: React.FC = () => {
     <Paper elevation={0} className={classes.paper}>
 
       <FormHeader
-        title="Cidades"
+        title="Clientes"
         icon={ListIcon}
-        newRoute="/cities/new"
-        helpText="Nesta opção serão informadas as cidades brasileiras, pertencentes a cada unidade da federação."
+        newRoute="/customers/new"
+        helpText=""
       />
 
       <CustomTable
         headCells={headCells}
         rows={citiesList}
-        totalRows={rowsCount}
+        totalRows={10}
         handleSearch={setSearch}
         isLoading={loading}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         rowsPerPage={rowsPerPage}
         handleChangePage={handleChangePage}
         page={page}
-        editRoute="/cities/edit"
+        editRoute="/customers/edit"
         handleDelete={handleDelete}
         handleRecordToDelete={setRecordToDelete}
         columnOrder={columnOrder}
