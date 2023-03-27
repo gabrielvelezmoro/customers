@@ -1,0 +1,1 @@
+# finteto-frontend-app-cra
