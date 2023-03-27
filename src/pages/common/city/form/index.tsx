@@ -96,9 +96,10 @@ const CityForm: React.FC = () => {
       gender: data.gender,
     }
 
+    console.log( 'payload: ',payLoad)
+
     if (params.id) {
       const { id } = params
-      console.log('id para update: ', id)
       console.log('payload: ', payLoad)
       await api
         .put(`/customer/${id}`, payLoad)
@@ -144,7 +145,7 @@ const CityForm: React.FC = () => {
           helpText=""
         />
 
-        <FormAlert setMainError={setMainError} mainError={mainError} />
+          <FormAlert setMainError={setMainError} mainError={mainError} />
 
         <Paper elevation={1} className={classes.gridPaper}>
           <Grid container spacing={1} className={classes.formContainer}>
@@ -208,19 +209,19 @@ const CityForm: React.FC = () => {
                   Genero
                 </Typography>
                 <TextField
-                  id="id"
-                  error={!!errors.id}
-                  helperText={errors?.id?.message}
+                  id="gender"
+                  error={!!errors.gender}
+                  helperText={errors?.gender?.message}
                   variant="outlined"
                   margin="dense"
                   size="small"
                   fullWidth={true}
-                  value={`${watch().id}`}
+                  value={`${watch().gender}`}
                   select
                   autoFocus
                   inputRef={firstInputElement}
-                  {...register("id", { onChange: (e) => {
-                    setValue("id", e.target.value)
+                  {...register("gender", { onChange: (e) => {
+                    setValue("gender", e.target.value)
                     handleChange(e)
                   }})}
                 >
