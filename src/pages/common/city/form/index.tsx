@@ -16,7 +16,6 @@ interface IRouteParams {
 
 const CityForm: React.FC = () => {
   const [mainError, setMainError] = useState('')
-  const [statesA, setStatesA] = useState([])
 
   const params = useParams<IRouteParams>()
   const firstInputElement = useRef(null)
@@ -24,8 +23,6 @@ const CityForm: React.FC = () => {
   const history = useHistory()
 
   const validationSchema = yup.object().shape({
-    id: yup.string()
-      .required('Campo obrigatório'),
     name: yup.string()
       .required('Campo obrigatório'),
   })
@@ -46,31 +43,11 @@ const CityForm: React.FC = () => {
     }
   })
 
-  // initial load
-
-  useEffect(() => {
-    async function loadData() {
-
-      // select UF
-
-      await api
-        .post('/states/select')
-        .then(response => {
-          const { data } = response.data
-
-          return data
-        })
-        .then((statesResult) => {
-          setStatesA(statesResult)
-        })
-        .catch(error => {
-          console.log(error)
-          return error
-        })
-    }
-
-    loadData()
-  }, [])
+ const genderData = [
+   {id: 'Male', code: 'Male'},
+  {id: 'Female', code: 'Female'},
+   {id: 'Other', code: 'Other'}
+ ]
 
 
   // main data load
@@ -82,7 +59,7 @@ const CityForm: React.FC = () => {
       // form data
 
       await api
-        .get(`/cities/${id}`)
+        .get(`/customer/${id}`)
         .then(response => {
           const { data } = response.data
 
@@ -114,7 +91,6 @@ const CityForm: React.FC = () => {
 
   const onSubmit = useCallback(async (data: ICityDTO) => {
     const payLoad: ICityDTO = {
-      id: data.id,
       name: data.name,
       email: data.email,
       gender: data.gender,
@@ -122,26 +98,26 @@ const CityForm: React.FC = () => {
 
     if (params.id) {
       const { id } = params
-
-
+      console.log('id para update: ', id)
+      console.log('payload: ', payLoad)
       await api
-        .put(`/cities`, id)
-        .then(history.push('/cities'))
+        .put(`/customer/${id}`, payLoad)
+        .then(history.push('/customers'))
         .catch(error => {
-          console.log(error.response.data)
-          setMainError(error.response.data.data.name)
-          return error.response.data.data
+          console.log('error: ', error)
+          setMainError(error)
+          return error
         })
     } else {
       await api
-        .post('/cities', payLoad)
-        .then(history.push('/cities/new'))
+        .post('/customer', payLoad)
+        .then(history.push('/customers/new'))
         .then(() => reset())
         .then(() => setTimeout(() => { firstInputElement.current.focus() }, 0))
         .catch(error => {
-          console.log(error.response.data)
-          setMainError(error.response.data.data.name)
-          return error.response.data.data
+          console.log('error: ', error)
+          setMainError(error)
+          return error
         })
     }
   }, [])
@@ -163,9 +139,9 @@ const CityForm: React.FC = () => {
         <FormHeader
           title="Clientes"
           icon={ListIcon}
-          backRoute="/cities"
+          backRoute="/customers"
           showSaveButton={true}
-          helpText="Nesta opção serão informadas as cidades brasileiras, pertencentes a cada unidade da federação."
+          helpText=""
         />
 
         <FormAlert setMainError={setMainError} mainError={mainError} />
@@ -173,10 +149,63 @@ const CityForm: React.FC = () => {
         <Paper elevation={1} className={classes.gridPaper}>
           <Grid container spacing={1} className={classes.formContainer}>
 
+            
+
+            <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+                    <Typography variant="caption" display="block" gutterBottom>
+                      Nome
+                    </Typography>
+                    <TextField
+                      id="name"
+                      error={!!errors.name}
+                      helperText={errors?.name?.message}
+                      variant="outlined"
+                      margin="dense"
+                      size="small"
+                      fullWidth={true}
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                      inputProps={{
+                        maxLength: 100
+                      }}
+                      {...register("name",
+                        { onChange: (e) => handleChange(e) }
+                      )}
+                      />
+                  </Grid>
+                </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
+                  <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
+
+                    <Typography variant="caption" display="block" gutterBottom>
+                      Email
+                    </Typography>
+                    <TextField
+                      id="email"
+                      error={!!errors.email}
+                      helperText={errors?.email?.message}
+                      variant="outlined"
+                      margin="dense"
+                      size="small"
+                      fullWidth={true}
+                      InputLabelProps={{
+                        shrink: true
+                      }}
+                      inputProps={{
+                        maxLength: 100
+                      }}
+                      {...register("email",
+                        { onChange: (e) => handleChange(e) }
+                      )}
+                    />
+                </Grid>
+            </Grid>
             <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
               <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
                 <Typography variant="caption" display="block" gutterBottom>
-                  UF
+                  Genero
                 </Typography>
                 <TextField
                   id="id"
@@ -195,10 +224,10 @@ const CityForm: React.FC = () => {
                     handleChange(e)
                   }})}
                 >
-                {statesA.map((state) => (
+                {genderData.map((state) => (
                   <MenuItem
                     key={state.id}
-                    value={state.id}
+                    value={state.code}
                   >
                     {state.code}
                   </MenuItem>
@@ -206,33 +235,6 @@ const CityForm: React.FC = () => {
                 </TextField>
               </Grid>
             </Grid>
-
-            <Grid item xs={12} sm={12} md={6} lg={3} xl={3}>
-              <Grid item xs={12} sm={12} md={12} lg={12} xl={12}>
-                <Typography variant="caption" display="block" gutterBottom>
-                  Nome
-                </Typography>
-                <TextField
-                  id="name"
-                  error={!!errors.name}
-                  helperText={errors?.name?.message}
-                  variant="outlined"
-                  margin="dense"
-                  size="small"
-                  fullWidth={true}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
-                  inputProps={{
-                    maxLength: 100
-                  }}
-                  {...register("name",
-                    { onChange: (e) => handleChange(e) }
-                  )}
-                />
-              </Grid>
-            </Grid>
-
           </Grid>
         </Paper>
       </Box>

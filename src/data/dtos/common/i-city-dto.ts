@@ -5,7 +5,7 @@ enum Gender{
 }
 
 interface ICityDTO {
-  id: number;
+  id?: number;
   name: string;
   email: string;
   gender: Gender;

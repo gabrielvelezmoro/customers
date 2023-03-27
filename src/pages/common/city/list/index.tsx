@@ -49,7 +49,6 @@ const CityList: React.FC = () => {
         const { data } = listResponse.data
         console.log(data);
         setCitiesList(data)
-
         
       })
       .catch(error => {

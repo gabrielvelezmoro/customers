@@ -1,18 +1,25 @@
+
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import { Paper, Typography } from '@mui/material'
 import { useStyles } from "./styles"
 import logo from 'assets/logo-main.svg'
+import {Button } from '@mui/material'
+
 
 const Home: React.FC = () => {
   const classes = useStyles()
-
+  
+  const history = useHistory()
   return (
+    
     <Paper elevation={3} className={classes.paper}>
-      <img src={logo} alt="Finteto" className={classes.logo} />
       <Typography variant="subtitle1" className={classes.homeText} >
-        financiamento imobiliário inteligente
+       CRUD de clientes
       </Typography>
+      <Button variant="contained" color="primary" onClick={() => history.push('customers')}>Clientes</Button>
     </Paper>
+    
   )
 }
 
