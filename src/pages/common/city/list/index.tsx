@@ -28,7 +28,6 @@ const headCells: ITableHeadCellDTO[] = [
 ]
 
 const CityList: React.FC = () => {
-  const [loading, setLoading] = useState(0)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(100)
@@ -41,7 +40,6 @@ const CityList: React.FC = () => {
   const alreadyMounted = useAlreadyMounted();
 
   const loadCities = async () => {
-    setLoading(1)
 
     await api
       .get('/customer')
@@ -112,7 +110,7 @@ const CityList: React.FC = () => {
         rows={citiesList}
         totalRows={10}
         handleSearch={setSearch}
-        isLoading={loading}
+        isLoading={0}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
         rowsPerPage={rowsPerPage}
         handleChangePage={handleChangePage}
